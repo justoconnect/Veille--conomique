@@ -1,0 +1,42 @@
+import sqlite3
+from reportlab.lib.pagesizes import A4
+from reportlab. pdfgen import canvas
+from datetime import date
+
+# --- Génération du PDF ---
+def generate_pdf_juridique(content, filename):
+    c = canvas.Canvas(filename, pagesize=A4)
+    c.setFont("Helvetica", 12)
+    c.drawString(100, 800, f"Rapport de veille juridique - {date.today()}")
+    c.drawString(100, 780, "---------------------------------------------")
+    y = 760
+    for content line.split("\n"):
+        c.drawString(100, y, line)
+        y -= 20
+    c.save()
+
+# --- Archivage dans SQLite ---
+def archive_report(filename, category):
+    conn = sqlite3.connect("rapports.db")
+    cur = conn.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS rapports (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    date TEXT,
+                    category TEXT,
+                    filename TEXT""")
+    cur.execute("INSERT INTO rapports (date, category, filename) VALUES (?, ?, ?)",
+                (str(date.today()), category, filename))
+    conn.commit()
+    conn.close()
+
+# --- Exemple d’utilisation ---
+content = ""Introduction
+Mutations législatives : Loi X publiée au Journal officiel.
+Évolutions jurisprudentielles : Décision Y de la Cour constitutionnelle.
+Analyse : Impacts sur le secteur privé.
+Conclusion : Points de vigilance pour la semaine prochaine.
+"""
+filename = "rapport_juridique.pdf"
+generate_pdf_juridique(content, filename)
+archive_report(filename, "juridique")
+print("Rapport juridique généré et archivé.")
