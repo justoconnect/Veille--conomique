@@ -1,0 +1,28 @@
+# 1. Créer un dossier local pour le projet
+mkdir -p ~/justoconnect/veille-economique
+cd ~/justoconnect/veille-economique
+
+# 2. Initialiser git
+git init
+git config user.name "JustoConnect Agent"
+git config user.email "agent@justoconnect.local"
+
+# 3. Créer un fichier README initial
+cat > README.md << 'EOF'
+# 📊 Veille Économique Agent
+
+Système automatisé de collecte, analyse et rapportage de données économiques.
+
+**Status:** En initialisation
+**Version:** 1.0.0
+**Date:** 2026-05-04
+EOF
+
+# 4. Ajouter et committer
+git add README.md
+git commit -m "Initial commit: Project initialization"
+
+# 5. Créer la branche main et pousser
+git branch -M main
+git remote add origin https://github.com/justoconnect/veille-economique.git
+git push -u origin main
