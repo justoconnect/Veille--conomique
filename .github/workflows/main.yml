@@ -1,0 +1,41 @@
+import sqlite3
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from datetime import date
+
+def generate_pdf_economique(content, filename):
+    c = canvas.Canvas(filename, pagesize=A4)
+    c.setFont("Helvetica", 12)
+    c.drawString(100, 800, f"Rapport de veille économique - {date.today()}")
+    c.drawString(100, 780, "---------------------------------------------")
+    y = 760
+    for line in content.split("\n"):
+        c.drawString(100, y, line)
+        y -= 20
+    c.save()
+
+def archive_report(filename, category):
+    conn = sqlite3.connect("rapports.db")
+    cur = conn.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS rapports (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    date TEXT,
+                    category TEXT,
+                    filename TEXT)""")
+    cur.execute("INSERT INTO rapports (date, category, filename) VALUES (?, ?, ?)",
+                (str(date.today()), category, filename))
+    conn.commit()
+    conn.close()
+
+# Exemple d’utilisation
+content = """Introduction
+Indicateurs macroéconomiques : PIB en hausse de 3.2%.
+Tendances géoéconomiques : hausse des exportations régionales.
+Comparaisons internationales : alignement avec projections FMI.
+Analyse prospective : croissance attendue au T3.
+Conclusion : Opportunités d’investissement.
+"""
+filename = "rapport_economique.pdf"
+generate_pdf_economique(content, filename)
+archive_report(filename, "economique")
+print("Rapport économique généré et archivé.")
